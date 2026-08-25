@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>間隔偵探的量化挑戰 - 國小五年級數學互動學習系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', 'Fredoka', sans-serif;
+            background-color: #0F172A;
+            color: #F8FAFC;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* iPad and Touch Screen Friendly Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1E293B;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 6px;
+        }
+
+        .touch-btn {
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+        }
+        .touch-btn:active {
+            transform: scale(0.95);
+        }
+
+        .tab-btn.active {
+            background-color: #0284C7;
+            color: #FFFFFF;
+            border-color: #38BDF8;
+            box-shadow: 0 4px 20px rgba(2, 132, 199, 0.4);
+        }
+
+        /* Glassmorphism containers */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        canvas {
+            touch-action: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-amber-400 selection:text-slate-900">
+
+    <header class="bg-slate-900/90 border-b-2 border-slate-700/80 sticky top-0 z-40 px-4 py-3 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Left: Title & Version Badge -->
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-400 text-slate-900 p-2.5 rounded-2xl shadow-lg flex items-center justify-center">
+                    <i class="fa-solid fa-magnifying-glass-location text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-black tracking-wide text-amber-300">間隔偵探的量化挑戰</h1>
+                    <span class="text-xs md:text-sm font-semibold text-slate-400 bg-slate-800 px-2.5 py-0.5 rounded-full border border-slate-700" id="versionBadge">
+                        v1.0.7 - Build 2026.08
+                    </span>
+                </div>
+            </div>
+
+            <!-- Right: Strictly Pure Icon Header Menu (No text labels) -->
+            <!-- Order: ① QR Code -> ② Fullscreen -> ③ Teacher -> ④ Guide -->
+            <div class="flex items-center space-x-2 md:space-x-3">
+                <!-- ① QR Code 掃碼連結 [QR Icon] -->
+                <button id="qrBtn" title="QR Code" class="touch-btn bg-slate-800 hover:bg-slate-700 text-amber-400 border-2 border-amber-400/40 w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center text-xl md:text-2xl shadow-md">
+                    <i class="fa-solid fa-qrcode"></i>
+                </button>
+
+                <!-- ② 全螢幕 toggle [Maximize Icon] -->
+                <button id="fullscreenBtn" title="Full Screen" class="touch-btn bg-slate-800 hover:bg-slate-700 text-cyan-400 border-2 border-cyan-400/40 w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center text-xl md:text-2xl shadow-md">
+                    <i class="fa-solid fa-expand" id="fullscreenIcon"></i>
+                </button>
+
+                <!-- ③ 教師專區 [Teacher Icon] -->
+                <button id="teacherBtn" title="Teacher Zone" class="touch-btn bg-slate-800 hover:bg-slate-700 text-emerald-400 border-2 border-emerald-400/40 w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center text-xl md:text-2xl shadow-md">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                </button>
+
+                <!-- ④ 課程指引 [Book Icon] -->
+                <button id="guideBtn" title="Course Guide" class="touch-btn bg-slate-800 hover:bg-slate-700 text-rose-400 border-2 border-rose-400/40 w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center text-xl md:text-2xl shadow-md">
+                    <i class="fa-solid fa-book-open"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
+        
+        <!-- Large Touch Navigation Tabs for 5th Graders -->
+        <nav class="grid grid-cols-3 gap-3 md:gap-4">
+            <button onclick="switchTab('tab1')" id="nav-tab1" class="tab-btn active touch-btn glass-card p-4 rounded-2xl text-center flex flex-col md:flex-row items-center justify-center space-y-1 md:space-y-0 md:space-x-3 border-2 border-slate-700">
+                <i class="fa-solid fa-file-contract text-2xl md:text-3xl text-amber-400"></i>
+                <span class="text-lg md:text-2xl font-black">任務一：合約解析</span>
+            </button>
+
+            <button onclick="switchTab('tab2')" id="nav-tab2" class="tab-btn touch-btn glass-card p-4 rounded-2xl text-center flex flex-col md:flex-row items-center justify-center space-y-1 md:space-y-0 md:space-x-3 border-2 border-slate-700">
+                <i class="fa-solid fa-compass-drafting text-2xl md:text-3xl text-cyan-400"></i>
+                <span class="text-lg md:text-2xl font-black">任務二：棲地模擬</span>
+            </button>
+
+            <button onclick="switchTab('tab3')" id="nav-tab3" class="tab-btn touch-btn glass-card p-4 rounded-2xl text-center flex flex-col md:flex-row items-center justify-center space-y-1 md:space-y-0 md:space-x-3 border-2 border-slate-700">
+                <i class="fa-solid fa-clipboard-question text-2xl md:text-3xl text-emerald-400"></i>
+                <span class="text-lg md:text-2xl font-black">任務三：ORID偵探考驗</span>
+            </button>
+        </nav>
+
+        <section id="tab1" class="space-y-6">
+            <div class="glass-card p-6 md:p-8 rounded-3xl border-2 border-amber-500/30 space-y-6">
+                <div class="flex items-center space-x-3 border-b-2 border-slate-700 pb-4">
+                    <span class="bg-amber-500 text-slate-950 font-black px-4 py-1.5 rounded-xl text-xl">機密</span>
+                    <h2 class="text-2xl md:text-3xl font-black text-amber-300">生態廊道微縮工程委託書</h2>
+                </div>
+
+                <div class="bg-slate-900/80 p-5 md:p-6 rounded-2xl border border-slate-700 text-lg md:text-2xl leading-relaxed space-y-4">
+                    <p class="font-medium text-slate-200">
+                        <i class="fa-solid fa-quote-left text-amber-400 mr-2"></i>
+                        各位間隔偵探：都市開發破壞了小動物的家。我們受託要在水池周圍建構「生態廊道棲地」。請解析以下規格，完成植樹三種基本型態的規畫！
+                    </p>
+                </div>
+
+                <!-- 3 Linear Planting Interactive Selector -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                    <!-- Scenario 1 -->
+                    <div class="bg-slate-800/90 p-5 rounded-2xl border-2 border-slate-700 hover:border-emerald-400 transition-all space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold text-emerald-400">型態 A</span>
+                            <i class="fa-solid fa-tree-city text-2xl text-emerald-400"></i>
+                        </div>
+                        <h3 class="text-2xl font-black">兩端都種樹</h3>
+                        <p class="text-slate-300 text-base md:text-lg">道路的起點與終點都種植樹木。</p>
+                        <div class="bg-emerald-950/60 p-3 rounded-xl border border-emerald-500/30 text-emerald-300 text-lg font-black text-center">
+                            棵數 = 間隔數 + 1
+                        </div>
+                    </div>
+
+                    <!-- Scenario 2 -->
+                    <div class="bg-slate-800/90 p-5 rounded-2xl border-2 border-slate-700 hover:border-cyan-400 transition-all space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold text-cyan-400">型態 B</span>
+                            <i class="fa-solid fa-road text-2xl text-cyan-400"></i>
+                        </div>
+                        <h3 class="text-2xl font-black">兩端都不種</h3>
+                        <p class="text-slate-300 text-base md:text-lg">道路起點與終點為出入口，皆不種樹。</p>
+                        <div class="bg-cyan-950/60 p-3 rounded-xl border border-cyan-500/30 text-cyan-300 text-lg font-black text-center">
+                            棵數 = 間隔數 - 1
+                        </div>
+                    </div>
+
+                    <!-- Scenario 3 -->
+                    <div class="bg-slate-800/90 p-5 rounded-2xl border-2 border-slate-700 hover:border-amber-400 transition-all space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold text-amber-400">型態 C</span>
+                            <i class="fa-solid fa-circle-half-stroke text-2xl text-amber-400"></i>
+                        </div>
+                        <h3 class="text-2xl font-black">一端種、一端不種</h3>
+                        <p class="text-slate-300 text-base md:text-lg">起點種樹，終點不種（或反之）。</p>
+                        <div class="bg-amber-950/60 p-3 rounded-xl border border-amber-500/30 text-amber-300 text-lg font-black text-center">
+                            棵數 = 間隔數
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Quick Warm-up Challenge -->
+                <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
+                    <h3 class="text-xl md:text-2xl font-bold text-amber-300 flex items-center">
+                        <i class="fa-solid fa-bolt text-amber-400 mr-2"></i> 快速推理小測驗
+                    </h3>
+                    <p class="text-lg md:text-xl">若長度為 20 公尺的直線花園，每隔 5 公尺設一個點，請算出有幾個間隔？</p>
+                    <div class="flex flex-wrap gap-4 items-center">
+                        <button onclick="checkWarmup(3)" class="touch-btn bg-slate-700 hover:bg-slate-600 px-6 py-3 rounded-xl text-xl font-bold border border-slate-500">3 個間隔</button>
+                        <button onclick="checkWarmup(4)" class="touch-btn bg-slate-700 hover:bg-slate-600 px-6 py-3 rounded-xl text-xl font-bold border border-slate-500">4 個間隔</button>
+                        <button onclick="checkWarmup(5)" class="touch-btn bg-slate-700 hover:bg-slate-600 px-6 py-3 rounded-xl text-xl font-bold border border-slate-500">5 個間隔</button>
+                    </div>
+                    <div id="warmupFeedback" class="hidden text-xl font-bold p-4 rounded-xl"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab2" class="space-y-6 hidden">
+            <div class="glass-card p-4 md:p-6 rounded-3xl border-2 border-cyan-500/30 space-y-4">
+                
+                <!-- Controls Header -->
+                <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-900/80 p-4 rounded-2xl border border-slate-700">
+                    <!-- Habitat Mode Toggle -->
+                    <div class="flex items-center space-x-2">
+                        <label class="text-lg md:text-xl font-bold text-slate-300">棲地類型：</label>
+                        <button id="modeLinearBtn" onclick="setHabitatMode('linear')" class="touch-btn bg-cyan-600 text-white font-bold px-4 py-2 rounded-xl text-lg md:text-xl border border-cyan-400">
+                            直線棲地
+                        </button>
+                        <button id="modeClosedBtn" onclick="setHabitatMode('closed')" class="touch-btn bg-slate-800 text-slate-300 font-bold px-4 py-2 rounded-xl text-lg md:text-xl border border-slate-600">
+                            封閉棲地 (圓形)
+                        </button>
+                    </div>
+
+                    <!-- Linear Mode Sub-options -->
+                    <div id="linearTypeContainer" class="flex items-center space-x-2">
+                        <select id="linearPlantType" onchange="renderCanvas()" class="bg-slate-800 text-amber-300 font-bold px-3 py-2 rounded-xl text-lg border border-slate-600 focus:outline-none">
+                            <option value="both">兩端都種 (棵數 = 間隔數 + 1)</option>
+                            <option value="none">兩端都不種 (棵數 = 間隔數 - 1)</option>
+                            <option value="one">一端種一端不種 (棵數 = 間隔數)</option>
+                        </select>
+                    </div>
+
+                    <!-- Dynamic Morph Action Button -->
+                    <button id="morphBtn" onclick="toggleRopeMorph()" class="touch-btn bg-rose-600 hover:bg-rose-500 text-white font-black px-6 py-2.5 rounded-2xl text-lg md:text-xl shadow-lg flex items-center space-x-2">
+                        <i class="fa-solid fa-arrows-to-circle text-2xl"></i>
+                        <span id="morphBtnText">首尾相接實驗 (棵數變異)</span>
+                    </button>
+                </div>
+
+                <!-- Range Sliders for Distance & Spacing -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-lg md:text-xl font-bold text-slate-200">總長度 (L)：<span id="lengthVal" class="text-amber-400 font-black text-2xl">30</span> 公尺</span>
+                        </div>
+                        <input type="range" id="lengthInput" min="10" max="60" step="5" value="30" oninput="updateCanvasParams()" class="w-full h-4 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-400">
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-lg md:text-xl font-bold text-slate-200">間隔距離 (d)：<span id="spacingVal" class="text-cyan-400 font-black text-2xl">5</span> 公尺</span>
+                        </div>
+                        <input type="range" id="spacingInput" min="2" max="10" step="1" value="5" oninput="updateCanvasParams()" class="w-full h-4 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-400">
+                    </div>
+                </div>
+
+                <!-- Canvas Visualizer Container -->
+                <div class="relative bg-slate-950 rounded-2xl border-2 border-slate-700 overflow-hidden shadow-2xl min-h-[360px] flex items-center justify-center">
+                    <canvas id="habitatCanvas" class="w-full h-[380px] block"></canvas>
+                    
+                    <!-- Overlay Badge for Live Stats -->
+                    <div class="absolute top-4 left-4 bg-slate-900/90 backdrop-blur border-2 border-slate-700 p-3 md:p-4 rounded-2xl space-y-1 shadow-lg text-base md:text-xl font-bold">
+                        <div class="text-amber-300">間隔計算：<span id="statIntervals" class="text-2xl font-black">6 個</span></div>
+                        <div class="text-emerald-400">樹木數：<span id="statTrees" class="text-2xl font-black">7 棵</span></div>
+                        <div class="text-cyan-300">狀態解析：<span id="statConflict" class="text-emerald-400 font-bold">整除狀態</span></div>
+                    </div>
+
+                    <!-- Quick Auto-fix Button for Non-divisible Cases -->
+                    <div id="autoFitContainer" class="absolute bottom-4 right-4 hidden">
+                        <button onclick="autoFixDivisible()" class="touch-btn bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-4 py-2.5 rounded-xl text-lg shadow-xl flex items-center space-x-2 border-2 border-white">
+                            <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
+                            <span>微調長度為整除數值</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Cognitive Conflict Explanation Box -->
+                <div class="bg-amber-950/40 border-2 border-amber-500/40 p-4 md:p-5 rounded-2xl text-lg md:text-xl leading-relaxed flex items-start space-x-3">
+                    <i class="fa-solid fa-lightbulb text-amber-400 text-3xl mt-1 shrink-0"></i>
+                    <div>
+                        <span class="font-black text-amber-300">偵探發現 (觀測分析)：</span>
+                        <span id="cognitiveText" class="text-slate-200">
+                            當我們把直線首尾相接變成圓形棲地時，原本起點和終點的兩棵樹「重合在一起」成為同一棵！這就是為什麼整除封閉棲地的<strong class="text-emerald-400">【樹木棵數等於間隔數】</strong>！不必死背 +1 或 -1！
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab3" class="space-y-6 hidden">
+            <div class="glass-card p-6 md:p-8 rounded-3xl border-2 border-emerald-500/30 space-y-6">
+                <div class="flex items-center space-x-3 border-b-2 border-slate-700 pb-4">
+                    <div class="bg-emerald-500 text-slate-950 p-2 rounded-xl">
+                        <i class="fa-solid fa-brain text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl md:text-3xl font-black text-emerald-300">ORID 焦點討論與量化挑戰</h2>
+                        <p class="text-slate-400 text-base md:text-lg">請填寫你的偵探心得並完成最終的量化計算題！</p>
+                    </div>
+                </div>
+
+                <form id="oridForm" onsubmit="handleOridSubmit(event)" class="space-y-6">
+                    <!-- Student Info -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-lg font-bold text-slate-300 mb-2">座號 / 姓名：</label>
+                            <input type="text" id="studentName" required class="w-full bg-slate-900 border-2 border-slate-700 rounded-xl p-3 text-xl text-amber-300 focus:border-emerald-400 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-lg font-bold text-slate-300 mb-2">小組名稱：</label>
+                            <input type="text" id="groupName" required class="w-full bg-slate-900 border-2 border-slate-700 rounded-xl p-3 text-xl text-amber-300 focus:border-emerald-400 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- [O] Objective -->
+                    <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700 space-y-3">
+                        <label class="block text-xl font-black text-amber-300">
+                            [O] Objective 客觀事實：今天實驗了哪三種植樹情況？
+                        </label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <label class="flex items-center space-x-3 bg-slate-900 p-3 rounded-xl border border-slate-700 cursor-pointer">
+                                <input type="checkbox" name="oridO" value="兩端都種" class="w-6 h-6 accent-emerald-500">
+                                <span class="text-lg font-bold">兩端都種</span>
+                            </label>
+                            <label class="flex items-center space-x-3 bg-slate-900 p-3 rounded-xl border border-slate-700 cursor-pointer">
+                                <input type="checkbox" name="oridO" value="兩端都不種" class="w-6 h-6 accent-emerald-500">
+                                <span class="text-lg font-bold">兩端都不種</span>
+                            </label>
+                            <label class="flex items-center space-x-3 bg-slate-900 p-3 rounded-xl border border-slate-700 cursor-pointer">
+                                <input type="checkbox" name="oridO" value="一端種一端不種" class="w-6 h-6 accent-emerald-500">
+                                <span class="text-lg font-bold">一端種一端不種</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- [R] Reflective -->
+                    <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700 space-y-3">
+                        <label class="block text-xl font-black text-cyan-300">
+                            [R] Reflective 感性反應：當你發現「棵數」不等於「間隔數」時，反應是什麼？
+                        </label>
+                        <textarea id="oridR" rows="2" required class="w-full bg-slate-900 border-2 border-slate-700 rounded-xl p-3 text-lg md:text-xl text-slate-200 focus:border-cyan-400 focus:outline-none"></textarea>
+                    </div>
+
+                    <!-- [I] Interpretive -->
+                    <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700 space-y-3">
+                        <label class="block text-xl font-black text-rose-300">
+                            [I] Interpretive 價值詮釋：為何「間隔」概念對城市規劃與生態廊道很重要？
+                        </label>
+                        <textarea id="oridI" rows="2" required class="w-full bg-slate-900 border-2 border-slate-700 rounded-xl p-3 text-lg md:text-xl text-slate-200 focus:border-rose-400 focus:outline-none"></textarea>
+                    </div>
+
+                    <!-- [D] Decisive Challenge Problem -->
+                    <div class="bg-amber-950/40 p-6 rounded-2xl border-2 border-amber-500 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-xl md:text-2xl font-black text-amber-300">
+                                [D] Decisive 決策挑戰題 (終極任務)
+                            </label>
+                            <span class="bg-amber-400 text-slate-950 px-3 py-1 rounded-lg font-black text-base">必答題</span>
+                        </div>
+                        <p class="text-xl md:text-2xl font-bold leading-relaxed text-slate-100">
+                            問題：公園有一條長度 <span class="text-amber-300 underline font-black">50 公尺</span> 的步道，計畫每隔 <span class="text-amber-300 underline font-black">5 公尺</span> 種一棵樹，且採用<span class="text-emerald-400 underline font-black">【兩端都種】</span>的方式，請問一共需要種植多少棵樹？
+                        </p>
+                        <div class="flex items-center space-x-4 pt-2">
+                            <input type="number" id="oridDAnswer" required class="w-48 bg-slate-900 border-2 border-amber-400 rounded-xl p-3 text-2xl font-black text-amber-300 text-center focus:outline-none">
+                            <span class="text-2xl font-bold">棵</span>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="touch-btn w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-black text-2xl md:text-3xl py-5 rounded-2xl shadow-xl flex items-center justify-center space-x-3">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>提交學習成果報告</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal 1: QR Code Modal -->
+    <div id="qrModal" onclick="handleModalBgClick(event, 'qrModal')" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-card max-w-md w-full p-6 rounded-3xl border-2 border-amber-400 space-y-6 text-center" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <h3 class="text-2xl font-black text-amber-300">掃描 QR Code 共享網頁</h3>
+                <button onclick="closeModal('qrModal')" class="text-slate-400 hover:text-white text-3xl font-bold w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-800">&times;</button>
+            </div>
+            <div class="bg-white p-4 rounded-2xl inline-block shadow-inner">
+                <img id="qrImage" src="" alt="QR Code" class="w-56 h-56 mx-auto object-contain rounded-lg">
+            </div>
+            <p class="text-slate-300 text-lg font-bold">平板/手機 掃描即可同步登入學習</p>
+            <button onclick="copyPageLink()" class="touch-btn w-full bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold py-3 rounded-xl border border-slate-600 text-xl flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-copy"></i>
+                <span>複製網址連結</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal 2: Teacher Zone Auth & Dashboard Modal -->
+    <div id="teacherModal" onclick="handleModalBgClick(event, 'teacherModal')" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <!-- Auth View -->
+        <div id="teacherAuthView" class="glass-card max-w-md w-full p-6 rounded-3xl border-2 border-emerald-500 space-y-6" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <h3 class="text-2xl font-black text-emerald-300">教師登入專區</h3>
+                <button onclick="closeModal('teacherModal')" class="text-slate-400 hover:text-white text-3xl font-bold w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-800">&times;</button>
+            </div>
+            <div class="space-y-4">
+                <p class="text-slate-300 text-lg">請輸入教師管理密碼以開啟學習歷程分析：</p>
+                <input type="password" id="teacherPassInput" class="w-full bg-slate-900 border-2 border-slate-700 rounded-xl p-4 text-2xl text-center font-bold text-amber-300 focus:border-emerald-400 focus:outline-none">
+                <div id="teacherPassError" class="hidden text-rose-400 font-bold text-center text-lg">密碼錯誤，請重新輸入！</div>
+                <button onclick="verifyTeacherPass()" class="touch-btn w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-2xl py-4 rounded-xl shadow-lg">
+                    確認登入
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard View (After Auth) -->
+        <div id="teacherDashboardView" class="glass-card max-w-5xl w-full p-6 rounded-3xl border-2 border-emerald-500 space-y-6 max-h-[90vh] overflow-y-auto hidden" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-4">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-chart-pie text-3xl text-emerald-400"></i>
+                    <h3 class="text-2xl md:text-3xl font-black text-emerald-300">教師管理專區與學習成效分析</h3>
+                </div>
+                <button onclick="closeModal('teacherModal')" class="text-slate-400 hover:text-white text-3xl font-bold w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-800">&times;</button>
+            </div>
+
+            <!-- Stats Overview Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-700 text-center">
+                    <span class="text-slate-400 text-lg font-bold">總提交人數</span>
+                    <div id="statTotalSubmissions" class="text-4xl font-black text-amber-300 mt-2">0</div>
+                </div>
+                <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-700 text-center">
+                    <span class="text-slate-400 text-lg font-bold">終極挑戰正解率</span>
+                    <div id="statAccuracy" class="text-4xl font-black text-emerald-400 mt-2">0%</div>
+                </div>
+                <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-700 text-center">
+                    <span class="text-slate-400 text-lg font-bold">學習歷程記錄</span>
+                    <div id="statLogStatus" class="text-3xl font-black text-cyan-300 mt-2">即時同步中</div>
+                </div>
+            </div>
+
+            <!-- Student Submissions Table -->
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <h4 class="text-xl font-bold text-slate-200">學生學習成果歷程列表</h4>
+                    <button onclick="clearAllTeacherData()" class="touch-btn bg-rose-900/60 hover:bg-rose-800 text-rose-300 border border-rose-600/50 px-4 py-2 rounded-xl text-base font-bold">
+                        <i class="fa-solid fa-trash-can mr-1"></i> 清除紀錄
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto bg-slate-900 rounded-2xl border border-slate-700 p-2">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-400 text-lg">
+                                <th class="p-3">座號/姓名</th>
+                                <th class="p-3">組別</th>
+                                <th class="p-3">O (客觀)</th>
+                                <th class="p-3">R (感受)</th>
+                                <th class="p-3">D (答案)</th>
+                                <th class="p-3">結果</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody" class="text-lg divide-y divide-slate-800">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Course Guide Modal -->
+    <div id="guideModal" onclick="handleModalBgClick(event, 'guideModal')" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-card max-w-2xl w-full p-6 md:p-8 rounded-3xl border-2 border-rose-400 space-y-6 max-h-[85vh] overflow-y-auto" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-book-open text-3xl text-rose-400"></i>
+                    <h3 class="text-2xl md:text-3xl font-black text-rose-300">課程指引與教學設計說明</h3>
+                </div>
+                <button onclick="closeModal('guideModal')" class="text-slate-400 hover:text-white text-3xl font-bold w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-800">&times;</button>
+            </div>
+
+            <div class="space-y-4 text-slate-200 text-lg md:text-xl leading-relaxed">
+                <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700">
+                    <h4 class="font-black text-amber-300 text-xl mb-1">🎯 適合對象與學習領域</h4>
+                    <p>國小五年級數學領域 — 間隔問題 (植樹問題) 與空間幾何歸納推理。</p>
+                </div>
+
+                <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700 space-y-2">
+                    <h4 class="font-black text-cyan-300 text-xl mb-1">💡 核心學習突破與餘數處理</h4>
+                    <ul class="list-disc list-inside space-y-1 text-slate-300">
+                        <li>打破傳統記憶「加一」、「減一」公式之僵化邏輯。</li>
+                        <li>透過 HTML5 Canvas 動態示範將直線首尾相接變成圓形棲地。</li>
+                        <li>強化除不盡（有餘數）時的幾何概念解析，顯示尾段長度並輔助教學推演。</li>
+                        <li>引導學生直觀發現「端點重合」時樹木減少一棵，歸納出《整除封閉棲地：棵數 = 間隔數》。</li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700">
+                    <h4 class="font-black text-emerald-300 text-xl mb-1">🗣️ ORID 焦點討論引導</h4>
+                    <p>評量設計融入 [O]客觀、[R]反應、[I]詮釋、[D]決策 四步驟，深化孩子數學思考力與表達能力。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-slate-950 border-t border-slate-800 py-4 px-4 text-center mt-auto">
+        <!-- EXACT text requirement: 數感實驗室  | 互動學習系統 | 教材設計：S.C. Kuo -->
+        <p class="text-base md:text-xl font-bold text-slate-400 tracking-wider">
+            數感實驗室  | 互動學習系統 | 教材設計：S.C. Kuo
+        </p>
+    </footer>
+
+    <script>
+        // Start with ZERO preset data
+        let studentSubmissions = [];
+
+        // Interactive Canvas State
+        let currentMode = 'linear'; // 'linear' or 'closed'
+        let animProgress = 0; // 0 = straight line, 1 = full circle
+        let isMorphing = false;
+        let animReqId = null;
+
+        // Interactive parameters
+        let params = {
+            length: 30,
+            spacing: 5,
+            plantType: 'both' // 'both', 'none', 'one'
+        };
+
+        window.onload = function() {
+            initCanvas();
+            renderCanvas();
+            updateQrCode();
+
+            // Load saved local submissions if any (defaults to zero)
+            const saved = localStorage.getItem('interval_detective_submissions');
+            if (saved) {
+                try {
+                    studentSubmissions = JSON.parse(saved);
+                } catch(e) {
+                    studentSubmissions = [];
+                }
+            }
+
+            // Window resize handler for canvas responsiveness
+            window.addEventListener('resize', () => {
+                initCanvas();
+                renderCanvas();
+            });
+
+            // Keyboard shortcut support (Escape key closes modals)
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    ['qrModal', 'teacherModal', 'guideModal'].forEach(closeModal);
+                }
+            });
+
+            // Bind top bar buttons strictly corresponding to prompt icons
+            const qrBtn = document.getElementById('qrBtn');
+            if (qrBtn) qrBtn.onclick = () => { updateQrCode(); openModal('qrModal'); };
+
+            const fsBtn = document.getElementById('fullscreenBtn');
+            if (fsBtn) fsBtn.onclick = toggleFullScreen;
+
+            const teacherBtn = document.getElementById('teacherBtn');
+            if (teacherBtn) teacherBtn.onclick = openTeacherZone;
+
+            const guideBtn = document.getElementById('guideBtn');
+            if (guideBtn) guideBtn.onclick = () => openModal('guideModal');
+        };
+
+        function updateQrCode() {
+            const qrImg = document.getElementById('qrImage');
+            if (!qrImg) return;
+            const pageUrl = window.location.href;
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(pageUrl)}`;
+            qrImg.onerror = function() {
+                this.src = `https://quickchart.io/qr?text=${encodeURIComponent(pageUrl)}&size=250`;
+            };
+        }
+
+        function handleModalBgClick(event, modalId) {
+            if (event.target.id === modalId) {
+                closeModal(modalId);
+            }
+        }
+
+        function switchTab(tabId) {
+            ['tab1', 'tab2', 'tab3'].forEach(id => {
+                const el = document.getElementById(id);
+                const navEl = document.getElementById('nav-' + id);
+                if (el) el.classList.add('hidden');
+                if (navEl) navEl.classList.remove('active');
+            });
+            const activeTab = document.getElementById(tabId);
+            const activeNav = document.getElementById('nav-' + tabId);
+            if (activeTab) activeTab.classList.remove('hidden');
+            if (activeNav) activeNav.classList.add('active');
+
+            if (tabId === 'tab2') {
+                setTimeout(() => {
+                    initCanvas();
+                    renderCanvas();
+                }, 50);
+            }
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+                const docEl = document.documentElement;
+                if (docEl.requestFullscreen) {
+                    docEl.requestFullscreen();
+                } else if (docEl.webkitRequestFullscreen) {
+                    docEl.webkitRequestFullscreen();
+                } else if (docEl.msRequestFullscreen) {
+                    docEl.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function checkWarmup(ans) {
+            const fb = document.getElementById('warmupFeedback');
+            fb.classList.remove('hidden', 'bg-emerald-900/60', 'bg-rose-900/60', 'text-emerald-300', 'text-rose-300');
+            if (ans === 4) {
+                fb.classList.add('bg-emerald-900/60', 'text-emerald-300');
+                fb.innerHTML = '<i class="fa-solid fa-circle-check mr-2"></i> 太棒了！推理正確：20 ÷ 5 = 4 個間隔！';
+            } else {
+                fb.classList.add('bg-rose-900/60', 'text-rose-300');
+                fb.innerHTML = '<i class="fa-solid fa-circle-xmark mr-2"></i> 再想一下喔！總長度 20 公尺，每 5 公尺分成一段，可以分成幾段？';
+            }
+        }
+
+        function initCanvas() {
+            const canvas = document.getElementById('habitatCanvas');
+            if (!canvas) return;
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+
+        function updateCanvasParams() {
+            params.length = parseInt(document.getElementById('lengthInput').value);
+            params.spacing = parseInt(document.getElementById('spacingInput').value);
+            
+            document.getElementById('lengthVal').innerText = params.length;
+            document.getElementById('spacingVal').innerText = params.spacing;
+
+            renderCanvas();
+        }
+
+        function setHabitatMode(mode) {
+            currentMode = mode;
+            const linBtn = document.getElementById('modeLinearBtn');
+            const clsBtn = document.getElementById('modeClosedBtn');
+            const typeContainer = document.getElementById('linearTypeContainer');
+
+            if (mode === 'linear') {
+                linBtn.className = 'touch-btn bg-cyan-600 text-white font-bold px-4 py-2 rounded-xl text-lg md:text-xl border border-cyan-400';
+                clsBtn.className = 'touch-btn bg-slate-800 text-slate-300 font-bold px-4 py-2 rounded-xl text-lg md:text-xl border border-slate-600';
+                typeContainer.classList.remove('hidden');
+                animProgress = 0;
+            } else {
+                clsBtn.className = 'touch-btn bg-cyan-600 text-white font-bold px-4 py-2 rounded-xl text-lg md:text-xl border border-cyan-400';
+                linBtn.className = 'touch-btn bg-slate-800 text-slate-300 font-bold px-4 py-2 rounded-xl text-lg md:text-xl border border-slate-600';
+                typeContainer.classList.add('hidden');
+                animProgress = 1;
+            }
+            renderCanvas();
+        }
+
+        function toggleRopeMorph() {
+            if (isMorphing) return;
+            isMorphing = true;
+            
+            const target = (animProgress > 0.5) ? 0 : 1;
+            const startTime = performance.now();
+            const startVal = animProgress;
+            const duration = 1200; // ms
+
+            function animateStep(now) {
+                const elapsed = now - startTime;
+                const p = Math.min(elapsed / duration, 1);
+                const easeP = p < 0.5 ? 2 * p * p : -1 + (4 - 2 * p) * p;
+                
+                animProgress = startVal + (target - startVal) * easeP;
+                renderCanvas();
+
+                if (p < 1) {
+                    animReqId = requestAnimationFrame(animateStep);
+                } else {
+                    isMorphing = false;
+                    currentMode = (target === 1) ? 'closed' : 'linear';
+                    setHabitatMode(currentMode);
+                }
+            }
+            requestAnimationFrame(animateStep);
+        }
+
+        function autoFixDivisible() {
+            const remainder = params.length % params.spacing;
+            if (remainder > 0) {
+                const newLength = params.length - remainder;
+                params.length = newLength;
+                document.getElementById('lengthInput').value = newLength;
+                document.getElementById('lengthVal').innerText = newLength;
+                renderCanvas();
+                showToast(`✨ 已將總長微調為 ${newLength}m（即可被 ${params.spacing}m 整除）`);
+            }
+        }
+
+        function renderCanvas() {
+            const canvas = document.getElementById('habitatCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const W = canvas.width;
+            const H = canvas.height;
+
+            ctx.clearRect(0, 0, W, H);
+
+            // Calculation & Remainder Logic Fix
+            const totalLen = params.length;
+            const spacing = params.spacing;
+            const intervals = Math.floor(totalLen / spacing);
+            const remainder = totalLen % spacing;
+            const isDivisible = (remainder === 0);
+
+            params.plantType = document.getElementById('linearPlantType').value;
+            
+            let treesCount = 0;
+            if (animProgress > 0.5 || currentMode === 'closed') {
+                treesCount = intervals; // Loop rule for full intervals
+            } else {
+                if (params.plantType === 'both') treesCount = intervals + 1;
+                else if (params.plantType === 'none') treesCount = intervals - 1;
+                else treesCount = intervals;
+            }
+
+            // Update overlay text with precise math explanation
+            const statIntervalsEl = document.getElementById('statIntervals');
+            if (isDivisible) {
+                statIntervalsEl.innerHTML = `${intervals} 個 <span class="text-xs text-emerald-400 font-bold block">(整除)</span>`;
+            } else {
+                statIntervalsEl.innerHTML = `${intervals} 個 <span class="text-xs text-amber-300 font-bold block">(餘 ${remainder}m)</span>`;
+            }
+
+            document.getElementById('statTrees').innerText = `${treesCount} 棵`;
+            
+            const conflictStat = document.getElementById('statConflict');
+            const cogText = document.getElementById('cognitiveText');
+            const autoFitBtn = document.getElementById('autoFitContainer');
+
+            // Handle Cognitive Conflict Explanations for divisible vs non-divisible
+            if (!isDivisible) {
+                if (autoFitBtn) autoFitBtn.classList.remove('hidden');
+                
+                conflictStat.innerText = `無法整除 (餘 ${remainder}m)`;
+                conflictStat.className = "text-amber-400 font-bold animate-pulse";
+
+                if (animProgress > 0.1) {
+                    cogText.innerHTML = `⚠️ <strong class="text-amber-300">除不盡問題觀測</strong>：總長 <strong>${totalLen}m</strong> ÷ 間隔 <strong>${spacing}m</strong> = <strong>${intervals} 個完整間隔</strong>，<strong class="text-rose-400">還剩下 ${remainder} 公尺</strong>！<br>` +
+                        `當首尾相接時，尾段 ${remainder}m 不足以再放一個 ${spacing}m 間隔，會導致閉合圓形的最後一段距離不相等。<br>` +
+                        `💡 <span class="text-emerald-300">偵探建議</span>：點擊右下角【微調長度】按鈕調整為 <strong>${totalLen - remainder}m</strong> 即可完美等距整除！`;
+                } else {
+                    cogText.innerHTML = `⚠️ <strong class="text-amber-300">無法整除（有餘數解析）</strong>：<br>` +
+                        `計算算式：<code>${totalLen} ÷ ${spacing} = ${intervals} ... 餘 ${remainder} 公尺</code>。<br>` +
+                        `代表可在道路上記劃 <strong>${intervals} 個長度為 ${spacing}m 的完整間隔</strong>，但尾端會剩下一段 <strong class="text-amber-300 font-black">${remainder}m</strong> 的剩餘步道（無法種樹）。`;
+                }
+            } else {
+                if (autoFitBtn) autoFitBtn.classList.add('hidden');
+
+                if (animProgress > 0.1) {
+                    conflictStat.innerText = "起終點重合！(-1棵)";
+                    conflictStat.className = "text-rose-400 font-black animate-pulse";
+                    cogText.innerHTML = `當我們把整除長度（${totalLen}m）的直線首尾相接閉合時，起點與終點重疊為一個點，原本兩端都種時的兩棵樹「合而為一」！因此<strong class='text-emerald-400'>【圓形封閉棲地：棵數 = 間隔數 = ${intervals}】</strong>！不必死背公式！`;
+                } else {
+                    conflictStat.innerText = "整除狀態 (無餘數)";
+                    conflictStat.className = "text-emerald-400 font-bold";
+                    cogText.innerHTML = `完美整除：${totalLen} ÷ ${spacing} = ${intervals} 個完整間隔。在直線棲地中，棵數取決於兩端點是否種樹（兩端都種為 ${intervals + 1} 棵）。切換【首尾相接】試試看端點發生了什麼事！`;
+                }
+            }
+
+            // Render Habitat Water/Pond background if circular
+            const centerX = W / 2;
+            const centerY = H / 2 + 10;
+            const radius = Math.min(W, H) * 0.32;
+            const lineLen = Math.min(W * 0.75, 500);
+
+            if (animProgress > 0.05) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius * animProgress, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(14, 165, 233, 0.15)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // Draw Main Rope Line / Loop
+            ctx.save();
+            ctx.lineWidth = 8;
+            ctx.strokeStyle = '#D97706'; // Normal rope color
+            ctx.lineCap = 'round';
+
+            const totalPoints = 120;
+            const validFrac = (intervals * spacing) / totalLen; // fraction of full intervals
+
+            // 1. Draw valid interval path (Solid Line)
+            ctx.beginPath();
+            for (let i = 0; i <= totalPoints; i++) {
+                const t = (i / totalPoints) * validFrac; // limit to valid interval length
+                const pos = getPointPosition(t, centerX, centerY, lineLen, radius, animProgress);
+                if (i === 0) ctx.moveTo(pos.x, pos.y);
+                else ctx.lineTo(pos.x, pos.y);
+            }
+            ctx.stroke();
+
+            // 2. If remainder exists, draw remainder path (Dashed Amber Line)
+            if (remainder > 0) {
+                ctx.beginPath();
+                ctx.strokeStyle = '#F59E0B';
+                ctx.setLineDash([8, 6]);
+                for (let i = 0; i <= 30; i++) {
+                    const t = validFrac + (i / 30) * (1 - validFrac);
+                    const pos = getPointPosition(t, centerX, centerY, lineLen, radius, animProgress);
+                    if (i === 0) ctx.moveTo(pos.x, pos.y);
+                    else ctx.lineTo(pos.x, pos.y);
+                }
+                ctx.stroke();
+                ctx.setLineDash([]); // Reset line dash
+            }
+            ctx.restore();
+
+            // Draw Interval Points, Trees, and Remainder Markers
+            for (let i = 0; i <= intervals; i++) {
+                const t = (i * spacing) / totalLen;
+                const pos = getPointPosition(t, centerX, centerY, lineLen, radius, animProgress);
+
+                // Determine whether to draw tree
+                let drawTree = false;
+                if (animProgress > 0.5) {
+                    drawTree = (i < intervals);
+                } else {
+                    if (params.plantType === 'both') drawTree = true;
+                    else if (params.plantType === 'none') drawTree = (i > 0 && i < intervals);
+                    else if (params.plantType === 'one') drawTree = (i < intervals);
+                }
+
+                if (drawTree) {
+                    drawTreeGraphic(ctx, pos.x, pos.y, (i === 0 && animProgress > 0.1) ? '#F43F5E' : '#10B981');
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, 6, 0, Math.PI * 2);
+                    ctx.fillStyle = '#64748B';
+                    ctx.fill();
+                }
+
+                // Spacing Tag
+                if (i < intervals && animProgress < 0.2) {
+                    const nextT = ((i + 0.5) * spacing) / totalLen;
+                    const midPos = getPointPosition(nextT, centerX, centerY, lineLen, radius, animProgress);
+                    ctx.fillStyle = '#CBD5E1';
+                    ctx.font = 'bold 15px Noto Sans TC';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`${spacing}m`, midPos.x, midPos.y + 28);
+                }
+            }
+
+            // Remainder Tag Visualization
+            if (remainder > 0 && animProgress < 0.2) {
+                const remMidT = validFrac + (1 - validFrac) / 2;
+                const remPos = getPointPosition(remMidT, centerX, centerY, lineLen, radius, animProgress);
+                ctx.fillStyle = '#F59E0B';
+                ctx.font = 'bold 15px Noto Sans TC';
+                ctx.textAlign = 'center';
+                ctx.fillText(`餘${remainder}m`, remPos.x, remPos.y + 28);
+            }
+        }
+
+        // Helper function for coordinate interpolation between straight line and circle
+        function getPointPosition(t, centerX, centerY, lineLen, radius, morphP) {
+            const lx = centerX - lineLen / 2 + t * lineLen;
+            const ly = centerY + 40;
+
+            const angle = -Math.PI / 2 + t * Math.PI * 2;
+            const cx = centerX + radius * Math.cos(angle);
+            const cy = centerY + radius * Math.sin(angle);
+
+            return {
+                x: lx + (cx - lx) * morphP,
+                y: ly + (cy - ly) * morphP
+            };
+        }
+
+        function drawTreeGraphic(ctx, x, y, foliageColor = '#10B981') {
+            ctx.save();
+            // Trunk
+            ctx.fillStyle = '#78350F';
+            ctx.fillRect(x - 4, y - 10, 8, 14);
+            
+            // Foliage
+            ctx.beginPath();
+            ctx.arc(x, y - 22, 16, 0, Math.PI * 2);
+            ctx.fillStyle = foliageColor;
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#064E3B';
+            ctx.stroke();
+
+            // Highlight shine
+            ctx.beginPath();
+            ctx.arc(x - 5, y - 26, 5, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        function handleOridSubmit(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('studentName').value.trim();
+            const group = document.getElementById('groupName').value.trim();
+            
+            const oChecked = Array.from(document.querySelectorAll('input[name="oridO"]:checked')).map(cb => cb.value);
+            const rVal = document.getElementById('oridR').value.trim();
+            const iVal = document.getElementById('oridI').value.trim();
+            const dVal = parseInt(document.getElementById('oridDAnswer').value.trim());
+
+            // Problem: 50m / 5m, both ends -> 50/5 + 1 = 11
+            const isCorrect = (dVal === 11);
+
+            const submission = {
+                id: Date.now(),
+                name: name,
+                group: group,
+                objective: oChecked.length > 0 ? oChecked.join(', ') : '未勾選',
+                reflective: rVal,
+                interpretive: iVal,
+                decisiveAnswer: dVal,
+                isCorrect: isCorrect,
+                timestamp: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+            };
+
+            studentSubmissions.push(submission);
+            localStorage.setItem('interval_detective_submissions', JSON.stringify(studentSubmissions));
+
+            // Custom Toast Message
+            showToast(isCorrect ? "🎉 太棒了！終極挑戰計算完全正確！已儲存紀錄！" : "👍 學習成果已成功提交記錄！");
+            
+            document.getElementById('studentName').value = '';
+            document.getElementById('groupName').value = '';
+            document.querySelectorAll('input[name="oridO"]').forEach(cb => cb.checked = false);
+            document.getElementById('oridR').value = '';
+            document.getElementById('oridI').value = '';
+            document.getElementById('oridDAnswer').value = '';
+        }
+
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-emerald-500 text-slate-950 px-8 py-4 rounded-2xl font-black text-2xl shadow-2xl z-50 border-2 border-white animate-bounce';
+            toast.innerText = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3500);
+        }
+
+        function openTeacherZone() {
+            openModal('teacherModal');
+            document.getElementById('teacherAuthView').classList.remove('hidden');
+            document.getElementById('teacherDashboardView').classList.add('hidden');
+            document.getElementById('teacherPassInput').value = '';
+            document.getElementById('teacherPassError').classList.add('hidden');
+        }
+
+        function verifyTeacherPass() {
+            // Password is strictly 'teacher'
+            const pass = document.getElementById('teacherPassInput').value;
+            if (pass === 'teacher') {
+                document.getElementById('teacherAuthView').classList.add('hidden');
+                document.getElementById('teacherDashboardView').classList.remove('hidden');
+                renderTeacherDashboard();
+            } else {
+                document.getElementById('teacherPassError').classList.remove('hidden');
+            }
+        }
+
+        function renderTeacherDashboard() {
+            const total = studentSubmissions.length;
+            document.getElementById('statTotalSubmissions').innerText = total;
+
+            const correctCount = studentSubmissions.filter(s => s.isCorrect).length;
+            const accuracy = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+            document.getElementById('statAccuracy').innerText = accuracy + '%';
+
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = '';
+
+            if (total === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500 font-bold">尚無學生提交紀錄 (預設數據為 0)</td></tr>`;
+                return;
+            }
+
+            studentSubmissions.forEach(sub => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-800/50';
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-amber-300">${escapeHtml(sub.name)}</td>
+                    <td class="p-3 text-slate-300">${escapeHtml(sub.group)}</td>
+                    <td class="p-3 text-sm text-slate-400">${escapeHtml(sub.objective)}</td>
+                    <td class="p-3 text-sm text-slate-300 max-w-xs truncate">${escapeHtml(sub.reflective)}</td>
+                    <td class="p-3 font-black text-2xl">${sub.decisiveAnswer} 棵</td>
+                    <td class="p-3">
+                        <span class="px-3 py-1 rounded-full text-sm font-black ${sub.isCorrect ? 'bg-emerald-900 text-emerald-300 border border-emerald-500' : 'bg-rose-900 text-rose-300 border border-rose-500'}">
+                            ${sub.isCorrect ? '正解 (11棵)' : '待補強'}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function clearAllTeacherData() {
+            if (confirm('確定要清除所有學生的學習歷程資料嗎？')) {
+                studentSubmissions = [];
+                localStorage.removeItem('interval_detective_submissions');
+                renderTeacherDashboard();
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function copyPageLink() {
+            const dummy = document.createElement('input');
+            document.body.appendChild(dummy);
+            dummy.value = window.location.href;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            showToast('📋 網頁連結已成功複製到剪貼簿！');
+        }
+    </script>
+</body>
+</html>
