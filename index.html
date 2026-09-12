@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>間隔偵探的量化挑戰 - 國小五年級數學互動學習系統</title>
+    <title>間隔偵探的量化挑戰 - 數感互動學習系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -19,15 +19,15 @@
 
         /* iPad and Touch Screen Friendly Custom Scrollbars */
         ::-webkit-scrollbar {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
         }
         ::-webkit-scrollbar-track {
             background: #1E293B;
         }
         ::-webkit-scrollbar-thumb {
             background: #475569;
-            border-radius: 6px;
+            border-radius: 5px;
         }
 
         .touch-btn {
@@ -35,7 +35,7 @@
             user-select: none;
         }
         .touch-btn:active {
-            transform: scale(0.95);
+            transform: scale(0.96);
         }
 
         .tab-btn.active {
@@ -47,7 +47,7 @@
 
         /* Glassmorphism containers */
         .glass-card {
-            background: rgba(30, 41, 59, 0.85);
+            background: rgba(30, 41, 59, 0.88);
             backdrop-filter: blur(12px);
             border: 2px solid rgba(255, 255, 255, 0.1);
         }
@@ -61,21 +61,21 @@
 
     <header class="bg-slate-900/90 border-b-2 border-slate-700/80 sticky top-0 z-40 px-4 py-3 backdrop-blur-md">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <!-- Left: Title & Version Badge -->
+            <!-- Left: Title & Simplified Version Badge (v1.1.0) -->
             <div class="flex items-center space-x-3">
                 <div class="bg-amber-400 text-slate-900 p-2.5 rounded-2xl shadow-lg flex items-center justify-center">
                     <i class="fa-solid fa-magnifying-glass-location text-2xl"></i>
                 </div>
-                <div>
+                <div class="flex items-center space-x-2">
                     <h1 class="text-2xl md:text-3xl font-black tracking-wide text-amber-300">間隔偵探的量化挑戰</h1>
-                    <span class="text-xs md:text-sm font-semibold text-slate-400 bg-slate-800 px-2.5 py-0.5 rounded-full border border-slate-700" id="versionBadge">
-                        v1.0.7 - Build 2026.08
+                    <span class="text-sm md:text-base font-black text-amber-400 bg-slate-800 px-3 py-1 rounded-full border border-amber-400/40 shadow-inner" id="versionBadge">
+                        v1.1.0
                     </span>
                 </div>
             </div>
 
             <!-- Right: Strictly Pure Icon Header Menu (No text labels) -->
-            <!-- Order: ① QR Code -> ② Fullscreen -> ③ Teacher -> ④ Guide -->
+            <!-- Order: ① QR Code -> ② Fullscreen -> ③ Course Guide -->
             <div class="flex items-center space-x-2 md:space-x-3">
                 <!-- ① QR Code 掃碼連結 [QR Icon] -->
                 <button id="qrBtn" title="QR Code" class="touch-btn bg-slate-800 hover:bg-slate-700 text-amber-400 border-2 border-amber-400/40 w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center text-xl md:text-2xl shadow-md">
@@ -83,17 +83,12 @@
                 </button>
 
                 <!-- ② 全螢幕 toggle [Maximize Icon] -->
-                <button id="fullscreenBtn" title="Full Screen" class="touch-btn bg-slate-800 hover:bg-slate-700 text-cyan-400 border-2 border-cyan-400/40 w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center text-xl md:text-2xl shadow-md">
+                <button id="fullscreenBtn" title="全螢幕切換" class="touch-btn bg-slate-800 hover:bg-slate-700 text-cyan-400 border-2 border-cyan-400/40 w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center text-xl md:text-2xl shadow-md">
                     <i class="fa-solid fa-expand" id="fullscreenIcon"></i>
                 </button>
 
-                <!-- ③ 教師專區 [Teacher Icon] -->
-                <button id="teacherBtn" title="Teacher Zone" class="touch-btn bg-slate-800 hover:bg-slate-700 text-emerald-400 border-2 border-emerald-400/40 w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center text-xl md:text-2xl shadow-md">
-                    <i class="fa-solid fa-chalkboard-user"></i>
-                </button>
-
-                <!-- ④ 課程指引 [Book Icon] -->
-                <button id="guideBtn" title="Course Guide" class="touch-btn bg-slate-800 hover:bg-slate-700 text-rose-400 border-2 border-rose-400/40 w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center text-xl md:text-2xl shadow-md">
+                <!-- ③ 課程指引 [Book Icon] -->
+                <button id="guideBtn" title="課程指引" class="touch-btn bg-slate-800 hover:bg-slate-700 text-rose-400 border-2 border-rose-400/40 w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center text-xl md:text-2xl shadow-md">
                     <i class="fa-solid fa-book-open"></i>
                 </button>
             </div>
@@ -102,21 +97,26 @@
 
     <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
         
-        <!-- Large Touch Navigation Tabs for 5th Graders -->
-        <nav class="grid grid-cols-3 gap-3 md:gap-4">
-            <button onclick="switchTab('tab1')" id="nav-tab1" class="tab-btn active touch-btn glass-card p-4 rounded-2xl text-center flex flex-col md:flex-row items-center justify-center space-y-1 md:space-y-0 md:space-x-3 border-2 border-slate-700">
-                <i class="fa-solid fa-file-contract text-2xl md:text-3xl text-amber-400"></i>
-                <span class="text-lg md:text-2xl font-black">任務一：合約解析</span>
+        <!-- Touch Navigation Tabs (Task 1 -> Task 2 -> Task 3 -> Showcase) -->
+        <nav class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            <button onclick="switchTab('tab1')" id="nav-tab1" class="tab-btn active touch-btn glass-card p-3.5 md:p-4 rounded-2xl text-center flex items-center justify-center space-x-2.5 border-2 border-slate-700">
+                <i class="fa-solid fa-file-contract text-2xl text-amber-400"></i>
+                <span class="text-lg md:text-xl font-black">任務一：合約解析</span>
             </button>
 
-            <button onclick="switchTab('tab2')" id="nav-tab2" class="tab-btn touch-btn glass-card p-4 rounded-2xl text-center flex flex-col md:flex-row items-center justify-center space-y-1 md:space-y-0 md:space-x-3 border-2 border-slate-700">
-                <i class="fa-solid fa-compass-drafting text-2xl md:text-3xl text-cyan-400"></i>
-                <span class="text-lg md:text-2xl font-black">任務二：棲地模擬</span>
+            <button onclick="switchTab('tab2')" id="nav-tab2" class="tab-btn touch-btn glass-card p-3.5 md:p-4 rounded-2xl text-center flex items-center justify-center space-x-2.5 border-2 border-slate-700">
+                <i class="fa-solid fa-compass-drafting text-2xl text-cyan-400"></i>
+                <span class="text-lg md:text-xl font-black">任務二：棲地模擬</span>
             </button>
 
-            <button onclick="switchTab('tab3')" id="nav-tab3" class="tab-btn touch-btn glass-card p-4 rounded-2xl text-center flex flex-col md:flex-row items-center justify-center space-y-1 md:space-y-0 md:space-x-3 border-2 border-slate-700">
-                <i class="fa-solid fa-clipboard-question text-2xl md:text-3xl text-emerald-400"></i>
-                <span class="text-lg md:text-2xl font-black">任務三：ORID偵探考驗</span>
+            <button onclick="switchTab('tab3')" id="nav-tab3" class="tab-btn touch-btn glass-card p-3.5 md:p-4 rounded-2xl text-center flex items-center justify-center space-x-2.5 border-2 border-slate-700">
+                <i class="fa-solid fa-brain text-2xl text-emerald-400"></i>
+                <span class="text-lg md:text-xl font-black">任務三：ORID考驗</span>
+            </button>
+
+            <button onclick="switchTab('tab4')" id="nav-tab4" class="tab-btn touch-btn glass-card p-3.5 md:p-4 rounded-2xl text-center flex items-center justify-center space-x-2.5 border-2 border-slate-700">
+                <i class="fa-solid fa-users-viewfinder text-2xl text-fuchsia-400"></i>
+                <span class="text-lg md:text-xl font-black">成果展示牆 <span id="navShowcaseCount" class="bg-fuchsia-500/30 text-fuchsia-300 text-xs px-2 py-0.5 rounded-full ml-1">0</span></span>
             </button>
         </nav>
 
@@ -130,7 +130,7 @@
                 <div class="bg-slate-900/80 p-5 md:p-6 rounded-2xl border border-slate-700 text-lg md:text-2xl leading-relaxed space-y-4">
                     <p class="font-medium text-slate-200">
                         <i class="fa-solid fa-quote-left text-amber-400 mr-2"></i>
-                        各位間隔偵探：都市開發破壞了小動物的家。我們受託要在水池周圍建構「生態廊道棲地」。請解析以下規格，完成植樹三種基本型態的規畫！
+                        各位間隔偵探：都市開發破壞了小動物的家。我們受託要在水池周圍建構「生態廊道棲地」。請解析以下規格，掌握植樹的三種基本型態！
                     </p>
                 </div>
 
@@ -176,12 +176,12 @@
                     </div>
                 </div>
 
-                <!-- Interactive Quick Warm-up Challenge -->
+                <!-- Quick Warm-up Challenge -->
                 <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
                     <h3 class="text-xl md:text-2xl font-bold text-amber-300 flex items-center">
-                        <i class="fa-solid fa-bolt text-amber-400 mr-2"></i> 快速推理小測驗
+                        <i class="fa-solid fa-bolt text-amber-400 mr-2"></i> 快速推理暖身題
                     </h3>
-                    <p class="text-lg md:text-xl">若長度為 20 公尺的直線花園，每隔 5 公尺設一個點，請算出有幾個間隔？</p>
+                    <p class="text-lg md:text-xl">若長度為 20 公尺的直線花園，每隔 5 公尺設一個點，請算出共有幾個間隔？</p>
                     <div class="flex flex-wrap gap-4 items-center">
                         <button onclick="checkWarmup(3)" class="touch-btn bg-slate-700 hover:bg-slate-600 px-6 py-3 rounded-xl text-xl font-bold border border-slate-500">3 個間隔</button>
                         <button onclick="checkWarmup(4)" class="touch-btn bg-slate-700 hover:bg-slate-600 px-6 py-3 rounded-xl text-xl font-bold border border-slate-500">4 個間隔</button>
@@ -281,7 +281,7 @@
                     </div>
                     <div>
                         <h2 class="text-2xl md:text-3xl font-black text-emerald-300">ORID 焦點討論與量化挑戰</h2>
-                        <p class="text-slate-400 text-base md:text-lg">請填寫你的偵探心得並完成最終的量化計算題！</p>
+                        <p class="text-slate-400 text-base md:text-lg">完成填寫後發布，作品將直接展示於「成果展示牆」供全班觀摩！</p>
                     </div>
                 </div>
 
@@ -355,14 +355,63 @@
                     <!-- Submit Button -->
                     <button type="submit" class="touch-btn w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-black text-2xl md:text-3xl py-5 rounded-2xl shadow-xl flex items-center justify-center space-x-3">
                         <i class="fa-solid fa-paper-plane"></i>
-                        <span>提交學習成果報告</span>
+                        <span>發布作品至成果展示牆</span>
                     </button>
                 </form>
             </div>
         </section>
+
+        <section id="tab4" class="space-y-6 hidden">
+            <div class="glass-card p-6 md:p-8 rounded-3xl border-2 border-fuchsia-500/30 space-y-6">
+                <!-- Showcase Header -->
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b-2 border-slate-700 pb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-fuchsia-500 text-slate-950 p-2.5 rounded-xl">
+                            <i class="fa-solid fa-users-viewfinder text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl md:text-3xl font-black text-fuchsia-300">學生作品展示牆</h2>
+                            <p class="text-slate-400 text-base md:text-lg">全班即時學習成果、觀點詮釋與挑戰紀錄</p>
+                        </div>
+                    </div>
+
+                    <!-- Action Bar -->
+                    <div class="flex items-center space-x-3">
+                        <button onclick="exportShowcaseCSV()" class="touch-btn bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl text-base md:text-lg flex items-center space-x-2 border border-emerald-400 shadow">
+                            <i class="fa-solid fa-file-csv text-xl"></i>
+                            <span>匯出作品紀錄 (CSV)</span>
+                        </button>
+                        <button onclick="promptClearShowcase()" class="touch-btn bg-rose-900/60 hover:bg-rose-800 text-rose-300 border border-rose-600/50 px-4 py-2.5 rounded-xl text-base md:text-lg font-bold">
+                            <i class="fa-solid fa-trash-can mr-1"></i>
+                            <span>清空展示牆</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Metrics Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-700 text-center">
+                        <span class="text-slate-400 text-base md:text-lg font-bold">總展示作品數</span>
+                        <div id="showcaseCount" class="text-4xl font-black text-amber-300 mt-1">0 篇</div>
+                    </div>
+                    <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-700 text-center">
+                        <span class="text-slate-400 text-base md:text-lg font-bold">終極挑戰正解率</span>
+                        <div id="showcaseAccuracy" class="text-4xl font-black text-emerald-400 mt-1">0%</div>
+                    </div>
+                    <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-700 text-center">
+                        <span class="text-slate-400 text-base md:text-lg font-bold">累積互評讚數</span>
+                        <div id="showcaseTotalLikes" class="text-4xl font-black text-rose-400 mt-1">0 個</div>
+                    </div>
+                </div>
+
+                <!-- Showcase Cards Grid -->
+                <div id="showcaseGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+                    <!-- Populated dynamically via JavaScript -->
+                </div>
+            </div>
+        </section>
     </main>
 
-    <!-- Modal 1: QR Code Modal -->
     <div id="qrModal" onclick="handleModalBgClick(event, 'qrModal')" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="glass-card max-w-md w-full p-6 rounded-3xl border-2 border-amber-400 space-y-6 text-center" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center border-b border-slate-700 pb-3">
@@ -372,89 +421,14 @@
             <div class="bg-white p-4 rounded-2xl inline-block shadow-inner">
                 <img id="qrImage" src="" alt="QR Code" class="w-56 h-56 mx-auto object-contain rounded-lg">
             </div>
-            <p class="text-slate-300 text-lg font-bold">平板/手機 掃描即可同步登入學習</p>
-            <button onclick="copyPageLink()" class="touch-btn w-full bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold py-3 rounded-xl border border-slate-600 text-xl flex items-center justify-center space-x-2">
+            <p class="text-slate-300 text-lg font-bold">學生平板相機掃描即可同步登入學習</p>
+            <button onclick="copyPageLink()" class="touch-btn w-full bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold py-3.5 rounded-xl border border-slate-600 text-xl flex items-center justify-center space-x-2">
                 <i class="fa-solid fa-copy"></i>
                 <span>複製網址連結</span>
             </button>
         </div>
     </div>
 
-    <!-- Modal 2: Teacher Zone Auth & Dashboard Modal -->
-    <div id="teacherModal" onclick="handleModalBgClick(event, 'teacherModal')" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-        <!-- Auth View -->
-        <div id="teacherAuthView" class="glass-card max-w-md w-full p-6 rounded-3xl border-2 border-emerald-500 space-y-6" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
-                <h3 class="text-2xl font-black text-emerald-300">教師登入專區</h3>
-                <button onclick="closeModal('teacherModal')" class="text-slate-400 hover:text-white text-3xl font-bold w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-800">&times;</button>
-            </div>
-            <div class="space-y-4">
-                <p class="text-slate-300 text-lg">請輸入教師管理密碼以開啟學習歷程分析：</p>
-                <input type="password" id="teacherPassInput" class="w-full bg-slate-900 border-2 border-slate-700 rounded-xl p-4 text-2xl text-center font-bold text-amber-300 focus:border-emerald-400 focus:outline-none">
-                <div id="teacherPassError" class="hidden text-rose-400 font-bold text-center text-lg">密碼錯誤，請重新輸入！</div>
-                <button onclick="verifyTeacherPass()" class="touch-btn w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-2xl py-4 rounded-xl shadow-lg">
-                    確認登入
-                </button>
-            </div>
-        </div>
-
-        <!-- Dashboard View (After Auth) -->
-        <div id="teacherDashboardView" class="glass-card max-w-5xl w-full p-6 rounded-3xl border-2 border-emerald-500 space-y-6 max-h-[90vh] overflow-y-auto hidden" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center border-b border-slate-700 pb-4">
-                <div class="flex items-center space-x-3">
-                    <i class="fa-solid fa-chart-pie text-3xl text-emerald-400"></i>
-                    <h3 class="text-2xl md:text-3xl font-black text-emerald-300">教師管理專區與學習成效分析</h3>
-                </div>
-                <button onclick="closeModal('teacherModal')" class="text-slate-400 hover:text-white text-3xl font-bold w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-800">&times;</button>
-            </div>
-
-            <!-- Stats Overview Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-700 text-center">
-                    <span class="text-slate-400 text-lg font-bold">總提交人數</span>
-                    <div id="statTotalSubmissions" class="text-4xl font-black text-amber-300 mt-2">0</div>
-                </div>
-                <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-700 text-center">
-                    <span class="text-slate-400 text-lg font-bold">終極挑戰正解率</span>
-                    <div id="statAccuracy" class="text-4xl font-black text-emerald-400 mt-2">0%</div>
-                </div>
-                <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-700 text-center">
-                    <span class="text-slate-400 text-lg font-bold">學習歷程記錄</span>
-                    <div id="statLogStatus" class="text-3xl font-black text-cyan-300 mt-2">即時同步中</div>
-                </div>
-            </div>
-
-            <!-- Student Submissions Table -->
-            <div class="space-y-3">
-                <div class="flex justify-between items-center">
-                    <h4 class="text-xl font-bold text-slate-200">學生學習成果歷程列表</h4>
-                    <button onclick="clearAllTeacherData()" class="touch-btn bg-rose-900/60 hover:bg-rose-800 text-rose-300 border border-rose-600/50 px-4 py-2 rounded-xl text-base font-bold">
-                        <i class="fa-solid fa-trash-can mr-1"></i> 清除紀錄
-                    </button>
-                </div>
-
-                <div class="overflow-x-auto bg-slate-900 rounded-2xl border border-slate-700 p-2">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="border-b border-slate-800 text-slate-400 text-lg">
-                                <th class="p-3">座號/姓名</th>
-                                <th class="p-3">組別</th>
-                                <th class="p-3">O (客觀)</th>
-                                <th class="p-3">R (感受)</th>
-                                <th class="p-3">D (答案)</th>
-                                <th class="p-3">結果</th>
-                            </tr>
-                        </thead>
-                        <tbody id="studentTableBody" class="text-lg divide-y divide-slate-800">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal 3: Course Guide Modal -->
     <div id="guideModal" onclick="handleModalBgClick(event, 'guideModal')" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="glass-card max-w-2xl w-full p-6 md:p-8 rounded-3xl border-2 border-rose-400 space-y-6 max-h-[85vh] overflow-y-auto" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center border-b border-slate-700 pb-3">
@@ -468,36 +442,54 @@
             <div class="space-y-4 text-slate-200 text-lg md:text-xl leading-relaxed">
                 <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700">
                     <h4 class="font-black text-amber-300 text-xl mb-1">🎯 適合對象與學習領域</h4>
-                    <p>國小五年級數學領域 — 間隔問題 (植樹問題) 與空間幾何歸納推理。</p>
+                    <p>國小五年級數學領域 — 間隔問題 (植樹問題) 與幾何規律歸納推理。</p>
                 </div>
 
                 <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700 space-y-2">
-                    <h4 class="font-black text-cyan-300 text-xl mb-1">💡 核心學習突破與餘數處理</h4>
+                    <h4 class="font-black text-cyan-300 text-xl mb-1">💡 核心學習突破與空間變異</h4>
                     <ul class="list-disc list-inside space-y-1 text-slate-300">
-                        <li>打破傳統記憶「加一」、「減一」公式之僵化邏輯。</li>
-                        <li>透過 HTML5 Canvas 動態示範將直線首尾相接變成圓形棲地。</li>
-                        <li>強化除不盡（有餘數）時的幾何概念解析，顯示尾段長度並輔助教學推演。</li>
-                        <li>引導學生直觀發現「端點重合」時樹木減少一棵，歸納出《整除封閉棲地：棵數 = 間隔數》。</li>
+                        <li>打破死背「加一」、「減一」之僵化公式。</li>
+                        <li>透過 HTML5 Canvas 動態模擬直線與環狀閉合棲地。</li>
+                        <li>發現「首尾相接」時兩端樹木重疊合一，直觀推得《整除封閉棲地：棵數 = 間隔數》。</li>
+                        <li>包含除不盡（有餘數）的虛線解析與微調引導。</li>
                     </ul>
                 </div>
 
                 <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700">
-                    <h4 class="font-black text-emerald-300 text-xl mb-1">🗣️ ORID 焦點討論引導</h4>
-                    <p>評量設計融入 [O]客觀、[R]反應、[I]詮釋、[D]決策 四步驟，深化孩子數學思考力與表達能力。</p>
+                    <h4 class="font-black text-emerald-300 text-xl mb-1">🗣️ ORID 焦點討論與同儕觀摩</h4>
+                    <p>評量設計融入 [O]客觀、[R]反應、[I]詮釋、[D]決策 四步驟，並直接在網頁展示牆公開陳列，促進小組互評與共好學習。</p>
                 </div>
             </div>
         </div>
     </div>
 
+    <div id="confirmModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-card max-w-md w-full p-6 rounded-3xl border-2 border-rose-500 space-y-6 text-center" onclick="event.stopPropagation()">
+            <div class="text-rose-400 text-5xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-2xl font-black text-slate-100" id="confirmModalTitle">確認清空展示牆？</h3>
+            <p class="text-slate-300 text-lg" id="confirmModalMsg">此動作將清除所有已發布的學生作品資料。</p>
+            <div class="flex items-center justify-center space-x-4 pt-2">
+                <button onclick="closeModal('confirmModal')" class="touch-btn bg-slate-700 hover:bg-slate-600 px-6 py-3 rounded-xl text-xl font-bold">
+                    取消
+                </button>
+                <button id="confirmModalOkBtn" class="touch-btn bg-rose-600 hover:bg-rose-500 px-6 py-3 rounded-xl text-xl font-bold text-white">
+                    確定清空
+                </button>
+            </div>
+        </div>
+    </div>
+
     <footer class="bg-slate-950 border-t border-slate-800 py-4 px-4 text-center mt-auto">
-        <!-- EXACT text requirement: 數感實驗室  | 互動學習系統 | 教材設計：S.C. Kuo -->
+        <!-- EXACT required text: 數感實驗室  | 互動學習系統 | Design：S.C. Kuo -->
         <p class="text-base md:text-xl font-bold text-slate-400 tracking-wider">
-            數感實驗室  | 互動學習系統 | 教材設計：S.C. Kuo
+            數感實驗室  | 互動學習系統 | Design：S.C. Kuo
         </p>
     </footer>
 
     <script>
-        // Start with ZERO preset data
+        // In-memory student works list (defaults to zero)
         let studentSubmissions = [];
 
         // Interactive Canvas State
@@ -519,7 +511,7 @@
             updateQrCode();
 
             // Load saved local submissions if any (defaults to zero)
-            const saved = localStorage.getItem('interval_detective_submissions');
+            const saved = localStorage.getItem('interval_detective_works_v1');
             if (saved) {
                 try {
                     studentSubmissions = JSON.parse(saved);
@@ -527,6 +519,7 @@
                     studentSubmissions = [];
                 }
             }
+            renderShowcaseWall();
 
             // Window resize handler for canvas responsiveness
             window.addEventListener('resize', () => {
@@ -537,22 +530,23 @@
             // Keyboard shortcut support (Escape key closes modals)
             window.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
-                    ['qrModal', 'teacherModal', 'guideModal'].forEach(closeModal);
+                    ['qrModal', 'guideModal', 'confirmModal'].forEach(closeModal);
                 }
             });
 
-            // Bind top bar buttons strictly corresponding to prompt icons
+            // Bind top bar buttons strictly to icons
             const qrBtn = document.getElementById('qrBtn');
             if (qrBtn) qrBtn.onclick = () => { updateQrCode(); openModal('qrModal'); };
 
             const fsBtn = document.getElementById('fullscreenBtn');
             if (fsBtn) fsBtn.onclick = toggleFullScreen;
 
-            const teacherBtn = document.getElementById('teacherBtn');
-            if (teacherBtn) teacherBtn.onclick = openTeacherZone;
-
             const guideBtn = document.getElementById('guideBtn');
             if (guideBtn) guideBtn.onclick = () => openModal('guideModal');
+
+            // Sync fullscreen icon if user exits via ESC
+            document.addEventListener('fullscreenchange', updateFullscreenIcon);
+            document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
         };
 
         function updateQrCode() {
@@ -572,7 +566,7 @@
         }
 
         function switchTab(tabId) {
-            ['tab1', 'tab2', 'tab3'].forEach(id => {
+            ['tab1', 'tab2', 'tab3', 'tab4'].forEach(id => {
                 const el = document.getElementById(id);
                 const navEl = document.getElementById('nav-' + id);
                 if (el) el.classList.add('hidden');
@@ -588,27 +582,35 @@
                     initCanvas();
                     renderCanvas();
                 }, 50);
+            } else if (tabId === 'tab4') {
+                renderShowcaseWall();
             }
         }
 
         function toggleFullScreen() {
-            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
                 const docEl = document.documentElement;
                 if (docEl.requestFullscreen) {
-                    docEl.requestFullscreen();
+                    docEl.requestFullscreen().catch(() => {});
                 } else if (docEl.webkitRequestFullscreen) {
                     docEl.webkitRequestFullscreen();
-                } else if (docEl.msRequestFullscreen) {
-                    docEl.msRequestFullscreen();
                 }
             } else {
                 if (document.exitFullscreen) {
-                    document.exitFullscreen();
+                    document.exitFullscreen().catch(() => {});
                 } else if (document.webkitExitFullscreen) {
                     document.webkitExitFullscreen();
-                } else if (document.msExitFullscreen) {
-                    document.msExitFullscreen();
                 }
+            }
+        }
+
+        function updateFullscreenIcon() {
+            const icon = document.getElementById('fullscreenIcon');
+            if (!icon) return;
+            if (document.fullscreenElement || document.webkitFullscreenElement) {
+                icon.className = 'fa-solid fa-compress';
+            } else {
+                icon.className = 'fa-solid fa-expand';
             }
         }
 
@@ -721,7 +723,6 @@
 
             ctx.clearRect(0, 0, W, H);
 
-            // Calculation & Remainder Logic Fix
             const totalLen = params.length;
             const spacing = params.spacing;
             const intervals = Math.floor(totalLen / spacing);
@@ -732,14 +733,13 @@
             
             let treesCount = 0;
             if (animProgress > 0.5 || currentMode === 'closed') {
-                treesCount = intervals; // Loop rule for full intervals
+                treesCount = intervals; // Closed loop rule
             } else {
                 if (params.plantType === 'both') treesCount = intervals + 1;
                 else if (params.plantType === 'none') treesCount = intervals - 1;
                 else treesCount = intervals;
             }
 
-            // Update overlay text with precise math explanation
             const statIntervalsEl = document.getElementById('statIntervals');
             if (isDivisible) {
                 statIntervalsEl.innerHTML = `${intervals} 個 <span class="text-xs text-emerald-400 font-bold block">(整除)</span>`;
@@ -753,10 +753,8 @@
             const cogText = document.getElementById('cognitiveText');
             const autoFitBtn = document.getElementById('autoFitContainer');
 
-            // Handle Cognitive Conflict Explanations for divisible vs non-divisible
             if (!isDivisible) {
                 if (autoFitBtn) autoFitBtn.classList.remove('hidden');
-                
                 conflictStat.innerText = `無法整除 (餘 ${remainder}m)`;
                 conflictStat.className = "text-amber-400 font-bold animate-pulse";
 
@@ -767,7 +765,7 @@
                 } else {
                     cogText.innerHTML = `⚠️ <strong class="text-amber-300">無法整除（有餘數解析）</strong>：<br>` +
                         `計算算式：<code>${totalLen} ÷ ${spacing} = ${intervals} ... 餘 ${remainder} 公尺</code>。<br>` +
-                        `代表可在道路上記劃 <strong>${intervals} 個長度為 ${spacing}m 的完整間隔</strong>，但尾端會剩下一段 <strong class="text-amber-300 font-black">${remainder}m</strong> 的剩餘步道（無法種樹）。`;
+                        `代表可在道路上規劃 <strong>${intervals} 個長度為 ${spacing}m 的完整間隔</strong>，但尾端會剩下一段 <strong class="text-amber-300 font-black">${remainder}m</strong> 的剩餘步道（無法種樹）。`;
                 }
             } else {
                 if (autoFitBtn) autoFitBtn.classList.add('hidden');
@@ -783,7 +781,7 @@
                 }
             }
 
-            // Render Habitat Water/Pond background if circular
+            // Habitat Pond visual
             const centerX = W / 2;
             const centerY = H / 2 + 10;
             const radius = Math.min(W, H) * 0.32;
@@ -801,26 +799,26 @@
                 ctx.restore();
             }
 
-            // Draw Main Rope Line / Loop
+            // Draw Habitat Border Rope
             ctx.save();
             ctx.lineWidth = 8;
-            ctx.strokeStyle = '#D97706'; // Normal rope color
+            ctx.strokeStyle = '#D97706';
             ctx.lineCap = 'round';
 
             const totalPoints = 120;
-            const validFrac = (intervals * spacing) / totalLen; // fraction of full intervals
+            const validFrac = (intervals * spacing) / totalLen;
 
-            // 1. Draw valid interval path (Solid Line)
+            // 1. Solid path for full intervals
             ctx.beginPath();
             for (let i = 0; i <= totalPoints; i++) {
-                const t = (i / totalPoints) * validFrac; // limit to valid interval length
+                const t = (i / totalPoints) * validFrac;
                 const pos = getPointPosition(t, centerX, centerY, lineLen, radius, animProgress);
                 if (i === 0) ctx.moveTo(pos.x, pos.y);
                 else ctx.lineTo(pos.x, pos.y);
             }
             ctx.stroke();
 
-            // 2. If remainder exists, draw remainder path (Dashed Amber Line)
+            // 2. Dashed path for remainder if any
             if (remainder > 0) {
                 ctx.beginPath();
                 ctx.strokeStyle = '#F59E0B';
@@ -832,16 +830,15 @@
                     else ctx.lineTo(pos.x, pos.y);
                 }
                 ctx.stroke();
-                ctx.setLineDash([]); // Reset line dash
+                ctx.setLineDash([]);
             }
             ctx.restore();
 
-            // Draw Interval Points, Trees, and Remainder Markers
+            // Draw Trees & Markers
             for (let i = 0; i <= intervals; i++) {
                 const t = (i * spacing) / totalLen;
                 const pos = getPointPosition(t, centerX, centerY, lineLen, radius, animProgress);
 
-                // Determine whether to draw tree
                 let drawTree = false;
                 if (animProgress > 0.5) {
                     drawTree = (i < intervals);
@@ -871,7 +868,7 @@
                 }
             }
 
-            // Remainder Tag Visualization
+            // Remainder Tag
             if (remainder > 0 && animProgress < 0.2) {
                 const remMidT = validFrac + (1 - validFrac) / 2;
                 const remPos = getPointPosition(remMidT, centerX, centerY, lineLen, radius, animProgress);
@@ -882,7 +879,6 @@
             }
         }
 
-        // Helper function for coordinate interpolation between straight line and circle
         function getPointPosition(t, centerX, centerY, lineLen, radius, morphP) {
             const lx = centerX - lineLen / 2 + t * lineLen;
             const ly = centerY + 40;
@@ -944,96 +940,170 @@
                 interpretive: iVal,
                 decisiveAnswer: dVal,
                 isCorrect: isCorrect,
+                likes: 0,
                 timestamp: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
             };
 
-            studentSubmissions.push(submission);
-            localStorage.setItem('interval_detective_submissions', JSON.stringify(studentSubmissions));
+            studentSubmissions.unshift(submission);
+            try {
+                localStorage.setItem('interval_detective_works_v1', JSON.stringify(studentSubmissions));
+            } catch(err) {}
 
-            // Custom Toast Message
-            showToast(isCorrect ? "🎉 太棒了！終極挑戰計算完全正確！已儲存紀錄！" : "👍 學習成果已成功提交記錄！");
+            showToast(isCorrect ? "🎉 終極挑戰答案正確！作品已發布至展示牆！" : "🌟 學習心得已發布至展示牆！");
             
+            // Reset form fields
             document.getElementById('studentName').value = '';
             document.getElementById('groupName').value = '';
             document.querySelectorAll('input[name="oridO"]').forEach(cb => cb.checked = false);
             document.getElementById('oridR').value = '';
             document.getElementById('oridI').value = '';
             document.getElementById('oridDAnswer').value = '';
+
+            // Switch to Showcase wall directly
+            switchTab('tab4');
+        }
+
+        function renderShowcaseWall() {
+            const grid = document.getElementById('showcaseGrid');
+            const countEl = document.getElementById('showcaseCount');
+            const navCountEl = document.getElementById('navShowcaseCount');
+            const accEl = document.getElementById('showcaseAccuracy');
+            const likesEl = document.getElementById('showcaseTotalLikes');
+
+            const total = studentSubmissions.length;
+            countEl.innerText = `${total} 篇`;
+            navCountEl.innerText = total;
+
+            const correctCount = studentSubmissions.filter(s => s.isCorrect).length;
+            const accuracy = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+            accEl.innerText = `${accuracy}%`;
+
+            const totalLikes = studentSubmissions.reduce((acc, cur) => acc + (cur.likes || 0), 0);
+            likesEl.innerText = `${totalLikes} 個`;
+
+            if (total === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-16 bg-slate-900/60 rounded-3xl border border-slate-800 space-y-4">
+                        <div class="text-6xl text-slate-600"><i class="fa-solid fa-folder-open"></i></div>
+                        <h3 class="text-2xl font-bold text-slate-400">目前尚無展示作品</h3>
+                        <p class="text-slate-500 text-lg">歡迎到「任務三」填寫發布，成為第一個登上展示牆的小偵探！</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = '';
+            studentSubmissions.forEach(sub => {
+                const card = document.createElement('div');
+                card.className = 'bg-slate-900/90 rounded-3xl p-6 border-2 border-slate-700 hover:border-fuchsia-500/50 transition-all space-y-4 shadow-xl';
+                card.innerHTML = `
+                    <div class="flex justify-between items-start border-b border-slate-800 pb-3">
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <span class="bg-amber-400 text-slate-950 font-black px-2.5 py-0.5 rounded-lg text-sm">${escapeHtml(sub.group)}</span>
+                                <h4 class="text-2xl font-black text-amber-300">${escapeHtml(sub.name)}</h4>
+                            </div>
+                            <span class="text-xs text-slate-400 mt-1 block"><i class="fa-regular fa-clock mr-1"></i>${sub.timestamp}</span>
+                        </div>
+                        <div>
+                            <span class="px-3 py-1 rounded-full text-sm font-black ${sub.isCorrect ? 'bg-emerald-900/80 text-emerald-300 border border-emerald-500' : 'bg-rose-900/80 text-rose-300 border border-rose-500'}">
+                                ${sub.isCorrect ? '<i class="fa-solid fa-circle-check mr-1"></i> 挑戰成功 (11棵)' : '探究思考中'}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 text-base md:text-lg">
+                        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80">
+                            <span class="text-xs text-amber-300 font-bold block mb-1">[O] 客觀事實 (實驗型態)：</span>
+                            <p class="text-slate-200 font-medium">${escapeHtml(sub.objective)}</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80">
+                            <span class="text-xs text-cyan-300 font-bold block mb-1">[R] 感性反應：</span>
+                            <p class="text-slate-200 font-medium">${escapeHtml(sub.reflective)}</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80">
+                            <span class="text-xs text-rose-300 font-bold block mb-1">[I] 價值詮釋：</span>
+                            <p class="text-slate-200 font-medium">${escapeHtml(sub.interpretive)}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+                        <div class="text-slate-300 text-base font-bold">
+                            終極題作答：<span class="text-amber-300 font-black text-xl">${sub.decisiveAnswer}</span> 棵
+                        </div>
+                        <button onclick="likeWork(${sub.id})" class="touch-btn bg-slate-800 hover:bg-slate-700 text-rose-400 border border-rose-500/40 px-4 py-1.5 rounded-xl font-bold flex items-center space-x-2 text-base">
+                            <i class="fa-solid fa-heart"></i>
+                            <span>${sub.likes || 0}</span>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function likeWork(workId) {
+            const item = studentSubmissions.find(s => s.id === workId);
+            if (item) {
+                item.likes = (item.likes || 0) + 1;
+                try {
+                    localStorage.setItem('interval_detective_works_v1', JSON.stringify(studentSubmissions));
+                } catch(e) {}
+                renderShowcaseWall();
+            }
+        }
+
+        function promptClearShowcase() {
+            const modal = document.getElementById('confirmModal');
+            const okBtn = document.getElementById('confirmModalOkBtn');
+            modal.classList.remove('hidden');
+            okBtn.onclick = function() {
+                studentSubmissions = [];
+                try {
+                    localStorage.removeItem('interval_detective_works_v1');
+                } catch(e) {}
+                closeModal('confirmModal');
+                renderShowcaseWall();
+                showToast('🗑️ 成果展示牆已清空！');
+            };
+        }
+
+        function exportShowcaseCSV() {
+            if (studentSubmissions.length === 0) {
+                showToast('⚠️ 目前展示牆尚無任何作品資料可供匯出！');
+                return;
+            }
+
+            let csv = '\uFEFF座號/姓名,小組,時間,[O]客觀事實,[R]感性反應,[I]價值詮釋,[D]作答答案,挑戰判定,獲得讚數\n';
+            studentSubmissions.forEach(sub => {
+                csv += `"${cleanCSV(sub.name)}","${cleanCSV(sub.group)}","${sub.timestamp}","${cleanCSV(sub.objective)}","${cleanCSV(sub.reflective)}","${cleanCSV(sub.interpretive)}","${sub.decisiveAnswer}棵","${sub.isCorrect ? '正確' : '需加強'}","${sub.likes || 0}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `間隔偵探學習成果展示紀錄_${new Date().toISOString().slice(0,10)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('📄 成果展示紀錄 CSV 檔案已成功下載！');
+        }
+
+        function cleanCSV(str) {
+            return String(str || '').replace(/"/g, '""');
+        }
+
+        function escapeHtml(str) {
+            return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
         function showToast(msg) {
             const toast = document.createElement('div');
-            toast.className = 'fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-emerald-500 text-slate-950 px-8 py-4 rounded-2xl font-black text-2xl shadow-2xl z-50 border-2 border-white animate-bounce';
+            toast.className = 'fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-emerald-500 text-slate-950 px-8 py-4 rounded-2xl font-black text-xl md:text-2xl shadow-2xl z-[100] border-2 border-white animate-bounce';
             toast.innerText = msg;
             document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3500);
-        }
-
-        function openTeacherZone() {
-            openModal('teacherModal');
-            document.getElementById('teacherAuthView').classList.remove('hidden');
-            document.getElementById('teacherDashboardView').classList.add('hidden');
-            document.getElementById('teacherPassInput').value = '';
-            document.getElementById('teacherPassError').classList.add('hidden');
-        }
-
-        function verifyTeacherPass() {
-            // Password is strictly 'teacher'
-            const pass = document.getElementById('teacherPassInput').value;
-            if (pass === 'teacher') {
-                document.getElementById('teacherAuthView').classList.add('hidden');
-                document.getElementById('teacherDashboardView').classList.remove('hidden');
-                renderTeacherDashboard();
-            } else {
-                document.getElementById('teacherPassError').classList.remove('hidden');
-            }
-        }
-
-        function renderTeacherDashboard() {
-            const total = studentSubmissions.length;
-            document.getElementById('statTotalSubmissions').innerText = total;
-
-            const correctCount = studentSubmissions.filter(s => s.isCorrect).length;
-            const accuracy = total > 0 ? Math.round((correctCount / total) * 100) : 0;
-            document.getElementById('statAccuracy').innerText = accuracy + '%';
-
-            const tbody = document.getElementById('studentTableBody');
-            tbody.innerHTML = '';
-
-            if (total === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500 font-bold">尚無學生提交紀錄 (預設數據為 0)</td></tr>`;
-                return;
-            }
-
-            studentSubmissions.forEach(sub => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-800/50';
-                tr.innerHTML = `
-                    <td class="p-3 font-bold text-amber-300">${escapeHtml(sub.name)}</td>
-                    <td class="p-3 text-slate-300">${escapeHtml(sub.group)}</td>
-                    <td class="p-3 text-sm text-slate-400">${escapeHtml(sub.objective)}</td>
-                    <td class="p-3 text-sm text-slate-300 max-w-xs truncate">${escapeHtml(sub.reflective)}</td>
-                    <td class="p-3 font-black text-2xl">${sub.decisiveAnswer} 棵</td>
-                    <td class="p-3">
-                        <span class="px-3 py-1 rounded-full text-sm font-black ${sub.isCorrect ? 'bg-emerald-900 text-emerald-300 border border-emerald-500' : 'bg-rose-900 text-rose-300 border border-rose-500'}">
-                            ${sub.isCorrect ? '正解 (11棵)' : '待補強'}
-                        </span>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function clearAllTeacherData() {
-            if (confirm('確定要清除所有學生的學習歷程資料嗎？')) {
-                studentSubmissions = [];
-                localStorage.removeItem('interval_detective_submissions');
-                renderTeacherDashboard();
-            }
-        }
-
-        function escapeHtml(str) {
-            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            setTimeout(() => toast.remove(), 3200);
         }
 
         function copyPageLink() {
